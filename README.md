@@ -1,73 +1,159 @@
-# React + TypeScript + Vite
+﻿# Product Cart React App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A production-style React + TypeScript shopping cart application with product listing, cart management, feature flags, and automated tests.
 
-Currently, two official plugins are available:
+## Objective
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Build a clean, interview-ready frontend application that demonstrates:
 
-## React Compiler
+- API integration with async loading and error handling
+- product search, category filtering, and price sorting
+- state management using Context + reducer
+- persistent cart state with localStorage
+- route-based UI with React Router
+- unit and component test coverage
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the ESLint configuration
+- Product catalog page (`/products`)
+- Search products by title
+- Filter products by category
+- Sort products by price (low to high / high to low)
+- Grid and list view toggle
+- Add products to cart
+- Cart page (`/cart`) with:
+  - quantity update
+  - remove item
+  - subtotal and total calculation
+- Cart badge in header (live item count)
+- Discount feature flag using query params and localStorage
+- Loading, error, and empty-state handling
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## How It Works
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. `ProductList` fetches products and categories from Fake Store API.
+2. `filterAndSortProducts` applies search/filter/sort logic in a pure utility.
+3. `CartContext` uses `useReducer` with `cartReducer` for all cart actions.
+4. Cart state is persisted to localStorage key: `product-cart-items`.
+5. `Header` reads cart summary and shows live badge count.
+6. `CartPage` computes subtotal and optional discount total.
+7. `useFeatureFlag` reads `?ff=discount` and persists the flag in localStorage.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Routes
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- `/` -> redirects to `/products`
+- `/products` -> product catalog
+- `/cart` -> shopping cart
+- `*` -> redirects to `/products`
+
+## Feature Flag
+
+Enable 10% cart discount by visiting:
+
+`/cart?ff=discount`
+
+Behavior:
+
+- When query param is present, the flag is stored in localStorage (`enableDiscount`).
+- On next visits, stored flag is reused even without query param.
+
+## Tech Stack
+
+- React 19
+- TypeScript
+- Vite
+- React Router DOM
+- Tailwind CSS v4
+- Axios
+- Jest + React Testing Library
+
+## Project Structure
+
+```txt
+src/
+  api/                  # API layer (products, categories)
+  components/
+    layout/             # Header
+    ui/                 # Button, Badge
+  context/              # Cart context provider and hooks
+  features/
+    products/           # Product list, product card, utilities, tests
+    cart/               # Cart page, reducer, reducer tests
+  hooks/                # Feature flag hook
+  test/                 # Test setup
+  types/                # Product type model
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 20+
+- npm 10+
+
+### Install
+
+```bash
+npm install
 ```
+
+### Run Development Server
+
+```bash
+npm run dev
+```
+
+Open: `http://localhost:5173`
+
+## Test and Quality
+
+### Run tests
+
+```bash
+npm run test
+```
+
+### Run tests in watch mode
+
+```bash
+npm run test:watch
+```
+
+### Lint
+
+```bash
+npm run lint
+```
+
+### Production build
+
+```bash
+npm run build
+```
+
+### Preview production build
+
+```bash
+npm run preview
+```
+
+## API Source
+
+- `GET https://fakestoreapi.com/products`
+- `GET https://fakestoreapi.com/products/categories`
+
+## Test Coverage Highlights
+
+- `cart-reducer.test.ts`
+  - add, remove, update quantity
+  - count and subtotal helpers
+- `ProductList.test.tsx`
+  - mocked API flow
+  - add-to-cart behavior
+  - header badge update
+
+## Contact
+
+Faysal Ahmed  
+Email: faysalahmediiuc@gmail.com  
+Phone: +8801675526215
