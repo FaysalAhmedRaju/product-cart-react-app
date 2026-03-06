@@ -1,7 +1,25 @@
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-export const useFeatureFlag = () => {
+const DISCOUNT_STORAGE_KEY = "enableDiscount";
+
+const readStoredFlag = () => localStorage.getItem(DISCOUNT_STORAGE_KEY) === "true";
+
+export const useFeatureFlag = (): boolean => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  return params.get("ff") === "discount";
+  const queryFlag = params.get("ff");
+  const isQueryEnabled = queryFlag === "discount";
+
+  useEffect(() => {
+    if (queryFlag !== null) {
+      localStorage.setItem(DISCOUNT_STORAGE_KEY, String(isQueryEnabled));
+    }
+  }, [queryFlag, isQueryEnabled]);
+
+  if (queryFlag !== null) {
+    return isQueryEnabled;
+  }
+
+  return readStoredFlag();
 };
